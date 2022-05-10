@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/image">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".MainActivity">
+
+        <EditText
+            android:id="@+id/et_countryCode"
+            android:layout_width="300dp"
+            android:layout_height="49dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Enter country code (optional)"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:textColorHint="#DAD6D6"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/permanent_tv_weather_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/et_countryCode"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:layout_marginBottom="100dp"
+            android:ellipsize="marquee"
+            android:fontFamily="sans-serif"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:text="Weather"
+            android:textColor="@color/white"
+            android:textSize="30dp" />
+
+        <EditText
+            android:id="@+id/et_cityName"
+            android:layout_width="300dp"
+            android:layout_height="49dp"
+            android:layout_below="@id/permanent_tv_weather_name"
+            android:layout_centerHorizontal="true"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Enter city name"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:textColor="@color/white"
+            android:textColorHint="#C6C5C5" />
+
+        <Button
+            android:id="@+id/bt_get"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/et_cityName"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="@android:color/holo_blue_light"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:text="Get" />
+
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bt_get"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            tools:text="arigjnakjdnjknfkjkfammmmmmmmmmmmn" />
+
+    </RelativeLayout>
+</ScrollView>
