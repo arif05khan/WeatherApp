@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -33,15 +34,9 @@ import java.text.DecimalFormat;
 public class MainActivity extends AppCompatActivity {
 
     private EditText countryCode, etCityName;
-    private TextView tv_result;
     private String mCity;
-    private RequestQueue mRequestQueue;
 
     private Button get;
-    final static String ApiKey = "16331473ce854d12da03edbc0e46807e";
-    final String url = "https://api.openweathermap.org/data/2.5/weather";
-
-    DecimalFormat df = new DecimalFormat("#.##");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,26 +45,26 @@ public class MainActivity extends AppCompatActivity {
 
         etCityName = findViewById(R.id.et_cityName);
         countryCode = findViewById(R.id.et_countryCode);
-        tv_result = findViewById(R.id.tv_result);
         get = findViewById(R.id.bt_get);
-
-
-        mRequestQueue = Volley.newRequestQueue(getApplicationContext());
 
         get.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!isNetworkAvailable()) {
-                    Log.e("MainAct", "Diaglog banega");
+                    Log.e("MainAct", "Dialog banega");
                     MakeDialog();
                 }
                 else {
                     mCity = etCityName.getText().toString();
-                    jsonParse();
                     Log.e("CityName", mCity);
 
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+                    Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+                    intent.putExtra("cityName", mCity);
+                    intent.putExtra("countryCode", countryCode.getText().toString());
+                    startActivity(intent);
                 }
             }
         });
@@ -89,17 +84,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!isNetworkAvailable()) {
-                    Log.e("MainAct", "Diaglog banega");
+                    Log.e("MainAct", "Dialog banega");
                     MakeDialog();
                 }
                 else {
                     dialog.dismiss();
                     mCity = etCityName.getText().toString();
-                    jsonParse();
                     Log.e("CityName", mCity);
 
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(etCityName.getWindowToken(), 0);
+
+                    Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+                    intent.putExtra("cityName", mCity);
+                    intent.putExtra("countryCode", countryCode.getText().toString());
+                    startActivity(intent);
                 }
             }
         });
@@ -112,92 +111,5 @@ public class MainActivity extends AppCompatActivity {
         });
         builder.setCancelable(false);
         builder.create().show();
-    }
-
-    private void jsonParse() {
-        String country_Code = countryCode.getText().toString();
-        String tempURL = "";
-
-        if (mCity.isEmpty()) {
-            tv_result.setText("Please ! Enter city name....!");
-        } else {
-            if (country_Code.equals("")) {
-                tempURL = url + "?q=" + mCity + "&appid=" + ApiKey;
-            }
-            else {
-                tempURL = url + "?q=" + mCity + "," + country_Code + "&appid=" + ApiKey;
-            }
-        }
-
-        Log.e("MainAct", tempURL);
-
-        StringRequest request = new StringRequest(Request.Method.GET, tempURL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                try {
-                    String result = "";
-                    JSONObject jsonResponse = new JSONObject(response);
-                    JSONArray jsonArray = jsonResponse.getJSONArray("weather");
-                    JSONObject JsonWeather = jsonArray.getJSONObject(0);
-
-                    String description = JsonWeather.getString("description");
-
-                    JSONObject JsonMain = jsonResponse.getJSONObject("main");
-                    double temp = JsonMain.getDouble("temp") - 273.15;
-                    double temp_min = JsonMain.getDouble("temp_min") - 273.15;
-                    double temp_max = JsonMain.getDouble("temp_max") - 273.15;
-                    int humidity = JsonMain.getInt("humidity");
-
-                    JSONObject jsonWind = jsonResponse.getJSONObject("wind");
-                    String wind = jsonWind.getString("speed");
-
-                    JSONObject jsonSys = jsonResponse.getJSONObject("sys");
-                    String country = jsonSys.getString("country");
-                    String city = jsonResponse.getString("name");
-
-                    result += "Current weather of " + city + " (" + country + ") " + "\n" +
-                            "Temperature: " + df.format(temp) + " °C\n" + "Minimum Temperature: " + df.format(temp_min) + " °C\n" +
-                            "Maximum Temperature: " + df.format(temp_max) + " °C\n" + "Humidity: " + humidity + " %\n" +
-                            "Wind Speed: " + wind + " m/s\n" + "\n Hope you found this informative !";
-
-                    tv_result.setText(result);
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                error.printStackTrace();
-                Toast.makeText(MainActivity.this, "Something is wrong", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        mRequestQueue.add(request);
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putString("cityName", mCity);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if(!isNetworkAvailable()) {
-            MakeDialog();
-        }
-        else {
-            mCity = savedInstanceState.getString("cityName");
-            jsonParse();
-        }
     }
 }
